@@ -55,6 +55,17 @@
 	  <EmbeddedResource Include="Login.resx">
 		  <DependentUpon>Login.cs</DependentUpon>
 	  </EmbeddedResource>
+	  <Compile Include="Quanlysinhvien.cs">
+		  <SubType>Form</SubType>
+	  </Compile>
+
+	  <Compile Include="Quanlysinhvien.Designer.cs">
+		  <DependentUpon>Quanlysinhvien.cs</DependentUpon>
+	  </Compile>
+
+	  <EmbeddedResource Include="Quanlysinhvien.resx">
+		  <DependentUpon>Quanlysinhvien.cs</DependentUpon>
+	  </EmbeddedResource>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <EmbeddedResource Include="Properties\Resources.resx">
