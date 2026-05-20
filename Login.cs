@@ -40,6 +40,9 @@ namespace QUANLYSV
             if (textBox1.Text == email && textBox2.Text == mssv)
             {
                 MessageBox.Show("Đăng nhập thành công");
+                Main main = new Main();
+                main.Show();
+                this.Hide();
             }
             else
             {

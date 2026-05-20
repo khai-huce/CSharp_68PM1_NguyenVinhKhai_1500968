@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -10,19 +10,14 @@ using System.Windows.Forms;
 
 namespace QUANLYSV
 {
-    public partial class Quanlysinhvien : Form
+    public partial class QLSinhVien : UserControl
     {
-        public Quanlysinhvien()
+        public QLSinhVien()
         {
             InitializeComponent();
         }
 
-        private void Quanlysinhvien_Load(object sender, EventArgs e)
-        {
-
-        }
-
-        private void panel1_Paint(object sender, PaintEventArgs e)
+        private void QLSinhVien_Load(object sender, EventArgs e)
         {
 
         }
