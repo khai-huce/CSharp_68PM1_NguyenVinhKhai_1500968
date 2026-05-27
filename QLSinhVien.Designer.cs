@@ -272,6 +272,7 @@
             this.btnAddStd.TabIndex = 3;
             this.btnAddStd.Text = "Thêm";
             this.btnAddStd.UseVisualStyleBackColor = false;
+            this.btnAddStd.Click += new System.EventHandler(this.btnAddStd_Click);
             // 
             // groupBox1
             // 
