@@ -33,6 +33,7 @@ namespace QUANLYSV
             this.btnDeleteStd = new System.Windows.Forms.Button();
             this.btnEditStd = new System.Windows.Forms.Button();
             this.btnAddStd = new System.Windows.Forms.Button();
+            this.btnViewStudents = new System.Windows.Forms.Button();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.txtGhiChu = new System.Windows.Forms.TextBox();
             this.label5 = new System.Windows.Forms.Label();
@@ -62,6 +63,7 @@ namespace QUANLYSV
             // InputStudentForm
             // 
             this.InputStudentForm.AccessibleDescription = "";
+            this.InputStudentForm.Controls.Add(this.btnViewStudents);
             this.InputStudentForm.Controls.Add(this.btnReload);
             this.InputStudentForm.Controls.Add(this.btnDeleteStd);
             this.InputStudentForm.Controls.Add(this.btnEditStd);
@@ -124,6 +126,19 @@ namespace QUANLYSV
             this.btnAddStd.Text = "Thêm";
             this.btnAddStd.UseVisualStyleBackColor = false;
             this.btnAddStd.Click += new System.EventHandler(this.btnAddStd_Click);
+            // 
+            // btnViewStudents
+            // 
+            this.btnViewStudents.BackColor = System.Drawing.SystemColors.Highlight;
+            this.btnViewStudents.Font = new System.Drawing.Font("Microsoft Sans Serif", 7.8F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btnViewStudents.ForeColor = System.Drawing.SystemColors.ButtonHighlight;
+            this.btnViewStudents.Location = new System.Drawing.Point(6, 560);
+            this.btnViewStudents.Name = "btnViewStudents";
+            this.btnViewStudents.Size = new System.Drawing.Size(343, 47);
+            this.btnViewStudents.TabIndex = 7;
+            this.btnViewStudents.Text = "Xem danh sách sinh viên";
+            this.btnViewStudents.UseVisualStyleBackColor = false;
+            this.btnViewStudents.Click += new System.EventHandler(this.btnViewStudents_Click);
             // 
             // groupBox1
             // 
@@ -357,6 +372,7 @@ namespace QUANLYSV
         private System.Windows.Forms.TextBox txtStdId;
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.Button btnAddStd;
+        private System.Windows.Forms.Button btnViewStudents;
         private System.Windows.Forms.GroupBox groupBox1;
         private System.Windows.Forms.Button btnEditStd;
         private System.Windows.Forms.Button btnReload;

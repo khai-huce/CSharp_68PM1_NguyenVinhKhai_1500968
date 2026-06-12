@@ -243,6 +243,21 @@ namespace QUANLYSV
             }
         }
 
+        private void btnViewStudents_Click(object sender, EventArgs e)
+        {
+            if (string.IsNullOrWhiteSpace(selectedClassId))
+            {
+                MessageBox.Show("Vui lòng chọn lớp học cần xem danh sách sinh viên.", "Chưa chọn lớp học", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
+
+            string className = txtName.Text.Trim();
+            using (frmClassStudents form = new frmClassStudents(selectedClassId, className))
+            {
+                form.ShowDialog();
+            }
+        }
+
         private void dgvStdView_CellClick(object sender, DataGridViewCellEventArgs e)
         {
             if (e.RowIndex < 0)
