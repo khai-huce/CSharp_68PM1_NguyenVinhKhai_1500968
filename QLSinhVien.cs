@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Configuration;
 using System.Linq;
 using System.Windows.Forms;
@@ -7,7 +8,12 @@ namespace QUANLYSV
 {
     public partial class QLSinhVien : UserControl
     {
+        private const int PageSize = 5;
+
         private string selectedStudentId;
+        private string currentKeyword = string.Empty;
+        private int currentPage = 1;
+        private int totalPages = 1;
 
         public QLSinhVien()
         {
@@ -20,7 +26,7 @@ namespace QUANLYSV
             try
             {
                 LoadClassList4CBX();
-                LoadStudentList();
+                LoadStudentList(resetPage: true);
                 ClearStudentForm();
             }
             catch (Exception ex)
@@ -66,27 +72,57 @@ namespace QUANLYSV
             cbGender.DisplayMember = string.Empty;
             cbGender.DropDownStyle = ComboBoxStyle.DropDownList;
             cbClass.DropDownStyle = ComboBoxStyle.DropDownList;
-            btnEditStd.Enabled = false;
-            btnDeleteStd.Enabled = false;
+
+            SetEditMode(false);
+            UpdatePagingButtons(0);
         }
 
-        private void LoadStudentList(string keyword = "")
+        private void LoadStudentList(string keyword = null, bool resetPage = false)
         {
+            if (keyword != null)
+            {
+                currentKeyword = keyword.Trim();
+            }
+
+            if (resetPage)
+            {
+                currentPage = 1;
+            }
+
             using (DatabaseDataContext db = CreateDataContext())
             {
-                var students = (from sv in db.SinhVien
-                                join lop in db.LopHoc on sv.MaLop equals lop.MaLop
-                                orderby sv.MaSV
-                                select new
-                                {
-                                    sv.MaSV,
-                                    sv.HoTen,
-                                    sv.GioiTinh,
-                                    sv.NgaySinh,
-                                    sv.MaLop,
-                                    lop.TenLop
-                                })
-                    .ToList()
+                var query = from sv in db.SinhVien
+                            join lop in db.LopHoc on sv.MaLop equals lop.MaLop
+                            select new
+                            {
+                                sv.MaSV,
+                                sv.HoTen,
+                                sv.GioiTinh,
+                                sv.NgaySinh,
+                                sv.MaLop,
+                                lop.TenLop
+                            };
+
+                if (!string.IsNullOrWhiteSpace(currentKeyword))
+                {
+                    query = query.Where(sv => sv.MaSV.Contains(currentKeyword)
+                                           || sv.HoTen.Contains(currentKeyword)
+                                           || sv.GioiTinh.Contains(currentKeyword)
+                                           || sv.TenLop.Contains(currentKeyword));
+                }
+
+                query = query.OrderBy(sv => sv.MaSV);
+
+                int totalRecords = query.Count();
+                totalPages = Math.Max(1, (int)Math.Ceiling(totalRecords / (double)PageSize));
+                currentPage = Math.Max(1, Math.Min(currentPage, totalPages));
+
+                var pageRecords = query
+                    .Skip((currentPage - 1) * PageSize)
+                    .Take(PageSize)
+                    .ToList();
+
+                List<StudentGridItem> pageStudents = pageRecords
                     .Select(sv => new StudentGridItem
                     {
                         MaSV = sv.MaSV,
@@ -98,22 +134,9 @@ namespace QUANLYSV
                     })
                     .ToList();
 
-                keyword = (keyword ?? string.Empty).Trim();
-
-                if (!string.IsNullOrWhiteSpace(keyword))
-                {
-                    students = students
-                        .Where(student => ContainsSearchText(student.MaSV, keyword)
-                            || ContainsSearchText(student.HoTen, keyword)
-                            || ContainsSearchText(student.GioiTinh, keyword)
-                            || ContainsSearchText(student.NgaySinh, keyword)
-                            || ContainsSearchText(student.MaLop, keyword)
-                            || ContainsSearchText(student.TenLop, keyword))
-                        .ToList();
-                }
-
-                dgvStdView.DataSource = students;
-                label7.Text = string.Format("Trang 1/1 | {0} bản ghi", students.Count);
+                dgvStdView.DataSource = pageStudents;
+                label7.Text = string.Format("Trang {0}/{1} | {2} bản ghi", currentPage, totalPages, totalRecords);
+                UpdatePagingButtons(totalRecords);
             }
         }
 
@@ -187,7 +210,7 @@ namespace QUANLYSV
                     db.SubmitChanges();
                 }
 
-                LoadStudentList(txtFind.Text);
+                LoadStudentList();
                 ClearStudentForm();
                 MessageBox.Show("Thêm sinh viên thành công.", "Thành công", MessageBoxButtons.OK, MessageBoxIcon.Information);
             }
@@ -220,7 +243,7 @@ namespace QUANLYSV
                     if (student == null)
                     {
                         MessageBox.Show("Không tìm thấy sinh viên đã chọn.", "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                        LoadStudentList(txtFind.Text);
+                        LoadStudentList();
                         ClearStudentForm();
                         return;
                     }
@@ -232,9 +255,7 @@ namespace QUANLYSV
                     txtStdDate.Value = student.NgaySinh;
                     cbGender.SelectedItem = student.GioiTinh;
                     cbClass.SelectedValue = student.MaLop;
-                    btnAddStd.Enabled = false;
-                    btnEditStd.Enabled = true;
-                    btnDeleteStd.Enabled = true;
+                    SetEditMode(true);
                 }
             }
             catch (Exception ex)
@@ -269,7 +290,7 @@ namespace QUANLYSV
                     if (student == null)
                     {
                         MessageBox.Show("Sinh viên cần sửa không còn tồn tại.", "Không tìm thấy dữ liệu", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                        LoadStudentList(txtFind.Text);
+                        LoadStudentList();
                         ClearStudentForm();
                         return;
                     }
@@ -281,7 +302,7 @@ namespace QUANLYSV
                     db.SubmitChanges();
                 }
 
-                LoadStudentList(txtFind.Text);
+                LoadStudentList();
                 ClearStudentForm();
                 MessageBox.Show("Cập nhật sinh viên thành công.", "Thành công", MessageBoxButtons.OK, MessageBoxIcon.Information);
             }
@@ -319,7 +340,7 @@ namespace QUANLYSV
                     if (student == null)
                     {
                         MessageBox.Show("Sinh viên cần xóa không còn tồn tại.", "Không tìm thấy dữ liệu", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                        LoadStudentList(txtFind.Text);
+                        LoadStudentList();
                         ClearStudentForm();
                         return;
                     }
@@ -328,7 +349,7 @@ namespace QUANLYSV
                     db.SubmitChanges();
                 }
 
-                LoadStudentList(txtFind.Text);
+                LoadStudentList();
                 ClearStudentForm();
                 MessageBox.Show("Xóa sinh viên thành công.", "Thành công", MessageBoxButtons.OK, MessageBoxIcon.Information);
             }
@@ -340,7 +361,7 @@ namespace QUANLYSV
 
         private void btnFind_Click(object sender, EventArgs e)
         {
-            LoadStudentList(txtFind.Text);
+            LoadStudentList(txtFind.Text, resetPage: true);
             ClearStudentForm();
         }
 
@@ -351,6 +372,40 @@ namespace QUANLYSV
                 e.SuppressKeyPress = true;
                 btnFind_Click(sender, EventArgs.Empty);
             }
+        }
+
+        private void btnFrist_Click(object sender, EventArgs e)
+        {
+            currentPage = 1;
+            LoadStudentList();
+            ClearStudentForm();
+        }
+
+        private void btnPre_Click(object sender, EventArgs e)
+        {
+            if (currentPage > 1)
+            {
+                currentPage--;
+                LoadStudentList();
+                ClearStudentForm();
+            }
+        }
+
+        private void btnNext_Click(object sender, EventArgs e)
+        {
+            if (currentPage < totalPages)
+            {
+                currentPage++;
+                LoadStudentList();
+                ClearStudentForm();
+            }
+        }
+
+        private void button1_Click(object sender, EventArgs e)
+        {
+            currentPage = totalPages;
+            LoadStudentList();
+            ClearStudentForm();
         }
 
         private bool TryGetStudentInput(out string fullName, out string gender, out string classId)
@@ -386,7 +441,7 @@ namespace QUANLYSV
         private void btnReload_Click(object sender, EventArgs e)
         {
             txtFind.Clear();
-            LoadStudentList();
+            LoadStudentList(string.Empty, resetPage: true);
             ClearStudentForm();
         }
 
@@ -400,10 +455,24 @@ namespace QUANLYSV
             cbGender.SelectedIndex = cbGender.Items.Count > 0 ? 0 : -1;
             cbClass.SelectedIndex = cbClass.Items.Count > 0 ? 0 : -1;
             dgvStdView.ClearSelection();
-            btnAddStd.Enabled = true;
-            btnEditStd.Enabled = false;
-            btnDeleteStd.Enabled = false;
+            SetEditMode(false);
             txtStdId.Focus();
+        }
+
+        private void SetEditMode(bool isEditing)
+        {
+            btnAddStd.Enabled = !isEditing;
+            btnEditStd.Enabled = isEditing;
+            btnDeleteStd.Enabled = isEditing;
+        }
+
+        private void UpdatePagingButtons(int totalRecords)
+        {
+            bool hasRecords = totalRecords > 0;
+            btnFrist.Enabled = hasRecords && currentPage > 1;
+            btnPre.Enabled = hasRecords && currentPage > 1;
+            btnNext.Enabled = hasRecords && currentPage < totalPages;
+            button1.Enabled = hasRecords && currentPage < totalPages;
         }
 
         private class StudentGridItem
