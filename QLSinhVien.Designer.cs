@@ -248,6 +248,7 @@
             this.btnReload.TabIndex = 6;
             this.btnReload.Text = "Làm mới";
             this.btnReload.UseVisualStyleBackColor = false;
+            this.btnReload.Click += new System.EventHandler(this.btnReload_Click);
             // 
             // btnDeleteStd
             // 
@@ -274,6 +275,7 @@
             this.btnEditStd.TabIndex = 4;
             this.btnEditStd.Text = "Sửa";
             this.btnEditStd.UseVisualStyleBackColor = false;
+            this.btnEditStd.Click += new System.EventHandler(this.btnEditStd_Click);
             // 
             // btnAddStd
             // 

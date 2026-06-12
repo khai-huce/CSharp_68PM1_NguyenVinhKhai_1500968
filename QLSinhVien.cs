@@ -122,36 +122,21 @@ namespace QUANLYSV
 
         private void btnAddStd_Click(object sender, EventArgs e)
         {
-            string maSinhVien = txtStdId.Text.Trim();
-            string hoTen = txtName.Text.Trim();
-            string gioiTinh = cbGender.SelectedItem == null ? string.Empty : cbGender.SelectedItem.ToString();
-            string maLop = cbClass.SelectedValue == null ? string.Empty : cbClass.SelectedValue.ToString();
+            string studentId = txtStdId.Text.Trim();
 
-            if (string.IsNullOrWhiteSpace(maSinhVien))
+            if (string.IsNullOrWhiteSpace(studentId))
             {
                 MessageBox.Show("Vui lòng nhập mã sinh viên.", "Thiếu thông tin", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 txtStdId.Focus();
                 return;
             }
 
-            if (string.IsNullOrWhiteSpace(hoTen))
-            {
-                MessageBox.Show("Vui lòng nhập họ và tên.", "Thiếu thông tin", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                txtName.Focus();
-                return;
-            }
+            string fullName;
+            string gender;
+            string classId;
 
-            if (string.IsNullOrWhiteSpace(gioiTinh))
+            if (!TryGetStudentInput(out fullName, out gender, out classId))
             {
-                MessageBox.Show("Vui lòng chọn giới tính.", "Thiếu thông tin", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                cbGender.Focus();
-                return;
-            }
-
-            if (string.IsNullOrWhiteSpace(maLop))
-            {
-                MessageBox.Show("Vui lòng chọn lớp.", "Thiếu thông tin", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                cbClass.Focus();
                 return;
             }
 
@@ -159,25 +144,23 @@ namespace QUANLYSV
             {
                 using (DatabaseDataContext db = CreateDataContext())
                 {
-                    bool isDuplicateStudentId = db.SinhVien.Any(sv => sv.MaSV == maSinhVien);
-
-                    if (isDuplicateStudentId)
+                    if (db.SinhVien.Any(sv => sv.MaSV == studentId))
                     {
                         MessageBox.Show("Mã sinh viên đã tồn tại.", "Trùng dữ liệu", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                         txtStdId.Focus();
                         return;
                     }
 
-                    SinhVien sinhVien = new SinhVien
+                    SinhVien student = new SinhVien
                     {
-                        MaSV = maSinhVien,
-                        HoTen = hoTen,
-                        GioiTinh = gioiTinh,
+                        MaSV = studentId,
+                        HoTen = fullName,
+                        GioiTinh = gender,
                         NgaySinh = txtStdDate.Value.Date,
-                        MaLop = maLop
+                        MaLop = classId
                     };
 
-                    db.SinhVien.InsertOnSubmit(sinhVien);
+                    db.SinhVien.InsertOnSubmit(student);
                     db.SubmitChanges();
                 }
 
@@ -234,6 +217,90 @@ namespace QUANLYSV
             {
                 MessageBox.Show("Không thể tải thông tin sinh viên: " + ex.Message, "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
+        }
+
+        private void btnEditStd_Click(object sender, EventArgs e)
+        {
+            if (string.IsNullOrWhiteSpace(selectedStudentId))
+            {
+                MessageBox.Show("Vui lòng chọn sinh viên cần sửa trong danh sách.", "Chưa chọn sinh viên", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
+
+            string fullName;
+            string gender;
+            string classId;
+
+            if (!TryGetStudentInput(out fullName, out gender, out classId))
+            {
+                return;
+            }
+
+            try
+            {
+                using (DatabaseDataContext db = CreateDataContext())
+                {
+                    SinhVien student = db.SinhVien.FirstOrDefault(sv => sv.MaSV == selectedStudentId);
+
+                    if (student == null)
+                    {
+                        MessageBox.Show("Sinh viên cần sửa không còn tồn tại.", "Không tìm thấy dữ liệu", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                        LoadStudentList();
+                        ClearStudentForm();
+                        return;
+                    }
+
+                    student.HoTen = fullName;
+                    student.GioiTinh = gender;
+                    student.NgaySinh = txtStdDate.Value.Date;
+                    student.MaLop = classId;
+                    db.SubmitChanges();
+                }
+
+                LoadStudentList();
+                ClearStudentForm();
+                MessageBox.Show("Cập nhật sinh viên thành công.", "Thành công", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Không thể cập nhật sinh viên: " + ex.Message, "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
+        private bool TryGetStudentInput(out string fullName, out string gender, out string classId)
+        {
+            fullName = txtName.Text.Trim();
+            gender = cbGender.SelectedItem == null ? string.Empty : cbGender.SelectedItem.ToString();
+            classId = cbClass.SelectedValue == null ? string.Empty : cbClass.SelectedValue.ToString();
+
+            if (string.IsNullOrWhiteSpace(fullName))
+            {
+                MessageBox.Show("Vui lòng nhập họ và tên.", "Thiếu thông tin", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                txtName.Focus();
+                return false;
+            }
+
+            if (string.IsNullOrWhiteSpace(gender))
+            {
+                MessageBox.Show("Vui lòng chọn giới tính.", "Thiếu thông tin", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                cbGender.Focus();
+                return false;
+            }
+
+            if (string.IsNullOrWhiteSpace(classId))
+            {
+                MessageBox.Show("Vui lòng chọn lớp.", "Thiếu thông tin", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                cbClass.Focus();
+                return false;
+            }
+
+            return true;
+        }
+
+        private void btnReload_Click(object sender, EventArgs e)
+        {
+            LoadStudentList();
+            ClearStudentForm();
         }
 
         private void ClearStudentForm()
