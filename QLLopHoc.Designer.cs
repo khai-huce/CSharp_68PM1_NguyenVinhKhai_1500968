@@ -1,4 +1,4 @@
-﻿namespace QUANLYSV
+namespace QUANLYSV
 {
     partial class QLLopHoc
     {
@@ -34,7 +34,7 @@
             this.btnEditStd = new System.Windows.Forms.Button();
             this.btnAddStd = new System.Windows.Forms.Button();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
-            this.txtStdDate = new System.Windows.Forms.DateTimePicker();
+            this.txtGhiChu = new System.Windows.Forms.TextBox();
             this.label5 = new System.Windows.Forms.Label();
             this.label1 = new System.Windows.Forms.Label();
             this.txtStdId = new System.Windows.Forms.TextBox();
@@ -84,6 +84,7 @@
             this.btnReload.TabIndex = 6;
             this.btnReload.Text = "Làm mới";
             this.btnReload.UseVisualStyleBackColor = false;
+            this.btnReload.Click += new System.EventHandler(this.btnReload_Click);
             // 
             // btnDeleteStd
             // 
@@ -96,6 +97,7 @@
             this.btnDeleteStd.TabIndex = 5;
             this.btnDeleteStd.Text = "Xóa";
             this.btnDeleteStd.UseVisualStyleBackColor = false;
+            this.btnDeleteStd.Click += new System.EventHandler(this.btnDeleteStd_Click);
             // 
             // btnEditStd
             // 
@@ -108,6 +110,7 @@
             this.btnEditStd.TabIndex = 4;
             this.btnEditStd.Text = "Sửa";
             this.btnEditStd.UseVisualStyleBackColor = false;
+            this.btnEditStd.Click += new System.EventHandler(this.btnEditStd_Click);
             // 
             // btnAddStd
             // 
@@ -120,10 +123,11 @@
             this.btnAddStd.TabIndex = 3;
             this.btnAddStd.Text = "Thêm";
             this.btnAddStd.UseVisualStyleBackColor = false;
+            this.btnAddStd.Click += new System.EventHandler(this.btnAddStd_Click);
             // 
             // groupBox1
             // 
-            this.groupBox1.Controls.Add(this.txtStdDate);
+            this.groupBox1.Controls.Add(this.txtGhiChu);
             this.groupBox1.Controls.Add(this.label5);
             this.groupBox1.Controls.Add(this.label1);
             this.groupBox1.Controls.Add(this.txtStdId);
@@ -137,22 +141,21 @@
             this.groupBox1.Text = "Thông tin Lớp";
             this.groupBox1.Enter += new System.EventHandler(this.groupBox1_Enter);
             // 
-            // txtStdDate
+            // txtGhiChu
             // 
-            this.txtStdDate.Format = System.Windows.Forms.DateTimePickerFormat.Short;
-            this.txtStdDate.Location = new System.Drawing.Point(9, 171);
-            this.txtStdDate.Name = "txtStdDate";
-            this.txtStdDate.Size = new System.Drawing.Size(331, 22);
-            this.txtStdDate.TabIndex = 9;
+            this.txtGhiChu.Location = new System.Drawing.Point(9, 171);
+            this.txtGhiChu.Name = "txtGhiChu";
+            this.txtGhiChu.Size = new System.Drawing.Size(332, 22);
+            this.txtGhiChu.TabIndex = 9;
             // 
             // label5
             // 
             this.label5.AutoSize = true;
             this.label5.Location = new System.Drawing.Point(0, 152);
             this.label5.Name = "label5";
-            this.label5.Size = new System.Drawing.Size(62, 16);
+            this.label5.Size = new System.Drawing.Size(53, 16);
             this.label5.TabIndex = 8;
-            this.label5.Text = "Ngày tạo";
+            this.label5.Text = "Ghi chú";
             // 
             // label1
             // 
@@ -204,6 +207,13 @@
             // 
             // dgvStdView
             // 
+            this.dgvStdView.AutoGenerateColumns = false;
+            this.dgvStdView.AllowUserToAddRows = false;
+            this.dgvStdView.ReadOnly = true;
+            this.dgvStdView.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
+            this.dgvStdView.MultiSelect = false;
+            this.dgvStdView.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.Fill;
+            this.dgvStdView.RowHeadersVisible = false;
             this.dgvStdView.BackgroundColor = System.Drawing.SystemColors.ButtonHighlight;
             this.dgvStdView.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.dgvStdView.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
@@ -216,7 +226,7 @@
             this.dgvStdView.RowTemplate.Height = 24;
             this.dgvStdView.Size = new System.Drawing.Size(714, 379);
             this.dgvStdView.TabIndex = 4;
-            this.dgvStdView.CellContentClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dgvStdView_CellContentClick);
+            this.dgvStdView.CellClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dgvStdView_CellClick);
             // 
             // btnFrist
             // 
@@ -226,6 +236,7 @@
             this.btnFrist.TabIndex = 5;
             this.btnFrist.Text = "<<";
             this.btnFrist.UseVisualStyleBackColor = true;
+            this.btnFrist.Click += new System.EventHandler(this.btnFrist_Click);
             // 
             // button1
             // 
@@ -235,6 +246,7 @@
             this.button1.TabIndex = 5;
             this.button1.Text = ">>";
             this.button1.UseVisualStyleBackColor = true;
+            this.button1.Click += new System.EventHandler(this.button1_Click);
             // 
             // btnNext
             // 
@@ -244,6 +256,7 @@
             this.btnNext.TabIndex = 5;
             this.btnNext.Text = ">";
             this.btnNext.UseVisualStyleBackColor = true;
+            this.btnNext.Click += new System.EventHandler(this.btnNext_Click);
             // 
             // btnPre
             // 
@@ -253,6 +266,7 @@
             this.btnPre.TabIndex = 5;
             this.btnPre.Text = "<";
             this.btnPre.UseVisualStyleBackColor = true;
+            this.btnPre.Click += new System.EventHandler(this.btnPre_Click);
             // 
             // label7
             // 
@@ -274,6 +288,7 @@
             this.btnFind.TabIndex = 3;
             this.btnFind.Text = "Tìm kiếm";
             this.btnFind.UseVisualStyleBackColor = false;
+            this.btnFind.Click += new System.EventHandler(this.btnFind_Click);
             // 
             // txtFind
             // 
@@ -281,6 +296,7 @@
             this.txtFind.Name = "txtFind";
             this.txtFind.Size = new System.Drawing.Size(324, 22);
             this.txtFind.TabIndex = 2;
+            this.txtFind.KeyDown += new System.Windows.Forms.KeyEventHandler(this.txtFind_KeyDown);
             // 
             // label6
             // 
@@ -293,6 +309,7 @@
             // 
             // StdID
             // 
+            this.StdID.DataPropertyName = "MaLop";
             this.StdID.HeaderText = "Mã lớp";
             this.StdID.MinimumWidth = 6;
             this.StdID.Name = "StdID";
@@ -301,6 +318,7 @@
             // 
             // Column1
             // 
+            this.Column1.DataPropertyName = "TenLop";
             this.Column1.HeaderText = "Tên lớp";
             this.Column1.MinimumWidth = 6;
             this.Column1.Name = "Column1";
@@ -308,7 +326,8 @@
             // 
             // Column2
             // 
-            this.Column2.HeaderText = "Ngày tạo";
+            this.Column2.DataPropertyName = "GhiChu";
+            this.Column2.HeaderText = "Ghi chú";
             this.Column2.MinimumWidth = 6;
             this.Column2.Name = "Column2";
             this.Column2.Width = 125;
@@ -343,7 +362,7 @@
         private System.Windows.Forms.Button btnReload;
         private System.Windows.Forms.Button btnDeleteStd;
         private System.Windows.Forms.Label label5;
-        private System.Windows.Forms.DateTimePicker txtStdDate;
+        private System.Windows.Forms.TextBox txtGhiChu;
         private System.Windows.Forms.Panel panel1;
         private System.Windows.Forms.Label label6;
         private System.Windows.Forms.Button btnFind;
