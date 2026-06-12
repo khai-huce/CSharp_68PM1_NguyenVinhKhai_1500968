@@ -7,6 +7,8 @@ namespace QUANLYSV
 {
     public partial class QLSinhVien : UserControl
     {
+        private string selectedStudentId;
+
         public QLSinhVien()
         {
             InitializeComponent();
@@ -45,6 +47,9 @@ namespace QUANLYSV
             dgvStdView.AllowUserToAddRows = false;
             dgvStdView.ReadOnly = true;
             dgvStdView.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
+            dgvStdView.MultiSelect = false;
+            dgvStdView.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
+            dgvStdView.RowHeadersVisible = false;
 
             StdID.DataPropertyName = "MaSV";
             Column1.DataPropertyName = "HoTen";
@@ -52,9 +57,16 @@ namespace QUANLYSV
             Column3.DataPropertyName = "NgaySinh";
             Column4.DataPropertyName = "TenLop";
 
+            StdID.FillWeight = 75;
+            Column1.FillWeight = 150;
+            Column2.FillWeight = 80;
+            Column3.FillWeight = 90;
+            Column4.FillWeight = 120;
+
             cbGender.DisplayMember = string.Empty;
             cbGender.DropDownStyle = ComboBoxStyle.DropDownList;
             cbClass.DropDownStyle = ComboBoxStyle.DropDownList;
+            btnEditStd.Enabled = false;
         }
 
         private void LoadStudentList()
@@ -179,13 +191,63 @@ namespace QUANLYSV
             }
         }
 
+        private void dgvStdView_CellClick(object sender, DataGridViewCellEventArgs e)
+        {
+            if (e.RowIndex < 0)
+            {
+                return;
+            }
+
+            string studentId = Convert.ToString(dgvStdView.Rows[e.RowIndex].Cells["StdID"].Value);
+
+            if (string.IsNullOrWhiteSpace(studentId))
+            {
+                return;
+            }
+
+            try
+            {
+                using (DatabaseDataContext db = CreateDataContext())
+                {
+                    SinhVien student = db.SinhVien.FirstOrDefault(sv => sv.MaSV == studentId);
+
+                    if (student == null)
+                    {
+                        MessageBox.Show("Không tìm thấy sinh viên đã chọn.", "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                        LoadStudentList();
+                        ClearStudentForm();
+                        return;
+                    }
+
+                    selectedStudentId = student.MaSV;
+                    txtStdId.Text = student.MaSV;
+                    txtStdId.ReadOnly = true;
+                    txtName.Text = student.HoTen;
+                    txtStdDate.Value = student.NgaySinh;
+                    cbGender.SelectedItem = student.GioiTinh;
+                    cbClass.SelectedValue = student.MaLop;
+                    btnAddStd.Enabled = false;
+                    btnEditStd.Enabled = true;
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Không thể tải thông tin sinh viên: " + ex.Message, "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
         private void ClearStudentForm()
         {
+            selectedStudentId = null;
             txtStdId.Clear();
+            txtStdId.ReadOnly = false;
             txtName.Clear();
             txtStdDate.Value = DateTime.Today;
             cbGender.SelectedIndex = cbGender.Items.Count > 0 ? 0 : -1;
             cbClass.SelectedIndex = cbClass.Items.Count > 0 ? 0 : -1;
+            dgvStdView.ClearSelection();
+            btnAddStd.Enabled = true;
+            btnEditStd.Enabled = false;
             txtStdId.Focus();
         }
     }

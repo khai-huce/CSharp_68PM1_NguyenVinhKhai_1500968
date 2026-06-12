@@ -84,10 +84,11 @@
             this.dgvStdView.RowTemplate.Height = 24;
             this.dgvStdView.Size = new System.Drawing.Size(634, 355);
             this.dgvStdView.TabIndex = 7;
+            this.dgvStdView.CellClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dgvStdView_CellClick);
             // 
             // StdID
             // 
-            this.StdID.HeaderText = "Mã ID";
+            this.StdID.HeaderText = "Mã sinh viên";
             this.StdID.MinimumWidth = 6;
             this.StdID.Name = "StdID";
             this.StdID.ReadOnly = true;
@@ -124,6 +125,9 @@
             // 
             // panel1
             // 
+            this.panel1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+            | System.Windows.Forms.AnchorStyles.Left)
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.panel1.Controls.Add(this.dgvStdView);
             this.panel1.Controls.Add(this.btnFrist);
             this.panel1.Controls.Add(this.button1);
@@ -140,6 +144,7 @@
             // 
             // btnFrist
             // 
+            this.btnFrist.Anchor = System.Windows.Forms.AnchorStyles.Bottom;
             this.btnFrist.Location = new System.Drawing.Point(160, 461);
             this.btnFrist.Name = "btnFrist";
             this.btnFrist.Size = new System.Drawing.Size(37, 32);
@@ -149,6 +154,7 @@
             // 
             // button1
             // 
+            this.button1.Anchor = System.Windows.Forms.AnchorStyles.Bottom;
             this.button1.Location = new System.Drawing.Point(504, 461);
             this.button1.Name = "button1";
             this.button1.Size = new System.Drawing.Size(37, 32);
@@ -158,6 +164,7 @@
             // 
             // btnNext
             // 
+            this.btnNext.Anchor = System.Windows.Forms.AnchorStyles.Bottom;
             this.btnNext.Location = new System.Drawing.Point(449, 461);
             this.btnNext.Name = "btnNext";
             this.btnNext.Size = new System.Drawing.Size(37, 32);
@@ -167,6 +174,7 @@
             // 
             // btnPre
             // 
+            this.btnPre.Anchor = System.Windows.Forms.AnchorStyles.Bottom;
             this.btnPre.Location = new System.Drawing.Point(220, 461);
             this.btnPre.Name = "btnPre";
             this.btnPre.Size = new System.Drawing.Size(37, 32);
@@ -176,6 +184,7 @@
             // 
             // label7
             // 
+            this.label7.Anchor = System.Windows.Forms.AnchorStyles.Bottom;
             this.label7.AutoSize = true;
             this.label7.Location = new System.Drawing.Point(289, 469);
             this.label7.Name = "label7";
@@ -214,6 +223,8 @@
             // InputStudentForm
             // 
             this.InputStudentForm.AccessibleDescription = "";
+            this.InputStudentForm.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+            | System.Windows.Forms.AnchorStyles.Left)));
             this.InputStudentForm.Controls.Add(this.btnReload);
             this.InputStudentForm.Controls.Add(this.btnDeleteStd);
             this.InputStudentForm.Controls.Add(this.btnEditStd);
@@ -227,6 +238,7 @@
             // 
             // btnReload
             // 
+            this.btnReload.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.btnReload.BackColor = System.Drawing.Color.Gray;
             this.btnReload.Font = new System.Drawing.Font("Microsoft Sans Serif", 7.8F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.btnReload.ForeColor = System.Drawing.SystemColors.ButtonHighlight;
@@ -239,6 +251,7 @@
             // 
             // btnDeleteStd
             // 
+            this.btnDeleteStd.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.btnDeleteStd.BackColor = System.Drawing.Color.Tomato;
             this.btnDeleteStd.Font = new System.Drawing.Font("Microsoft Sans Serif", 7.8F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.btnDeleteStd.ForeColor = System.Drawing.SystemColors.ButtonHighlight;
@@ -251,6 +264,7 @@
             // 
             // btnEditStd
             // 
+            this.btnEditStd.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.btnEditStd.BackColor = System.Drawing.Color.Green;
             this.btnEditStd.Font = new System.Drawing.Font("Microsoft Sans Serif", 7.8F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.btnEditStd.ForeColor = System.Drawing.SystemColors.ButtonHighlight;
@@ -263,6 +277,7 @@
             // 
             // btnAddStd
             // 
+            this.btnAddStd.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.btnAddStd.BackColor = System.Drawing.SystemColors.Highlight;
             this.btnAddStd.Font = new System.Drawing.Font("Microsoft Sans Serif", 7.8F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.btnAddStd.ForeColor = System.Drawing.SystemColors.ButtonHighlight;
