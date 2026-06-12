@@ -203,6 +203,7 @@
             this.btnFind.TabIndex = 3;
             this.btnFind.Text = "Tìm kiếm";
             this.btnFind.UseVisualStyleBackColor = false;
+            this.btnFind.Click += new System.EventHandler(this.btnFind_Click);
             // 
             // txtFind
             // 
@@ -210,6 +211,7 @@
             this.txtFind.Name = "txtFind";
             this.txtFind.Size = new System.Drawing.Size(324, 22);
             this.txtFind.TabIndex = 2;
+            this.txtFind.KeyDown += new System.Windows.Forms.KeyEventHandler(this.txtFind_KeyDown);
             // 
             // label6
             // 
@@ -262,6 +264,7 @@
             this.btnDeleteStd.TabIndex = 5;
             this.btnDeleteStd.Text = "Xóa";
             this.btnDeleteStd.UseVisualStyleBackColor = false;
+            this.btnDeleteStd.Click += new System.EventHandler(this.btnDeleteStd_Click);
             // 
             // btnEditStd
             // 

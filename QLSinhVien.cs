@@ -67,9 +67,10 @@ namespace QUANLYSV
             cbGender.DropDownStyle = ComboBoxStyle.DropDownList;
             cbClass.DropDownStyle = ComboBoxStyle.DropDownList;
             btnEditStd.Enabled = false;
+            btnDeleteStd.Enabled = false;
         }
 
-        private void LoadStudentList()
+        private void LoadStudentList(string keyword = "")
         {
             using (DatabaseDataContext db = CreateDataContext())
             {
@@ -82,18 +83,34 @@ namespace QUANLYSV
                                     sv.HoTen,
                                     sv.GioiTinh,
                                     sv.NgaySinh,
+                                    sv.MaLop,
                                     lop.TenLop
                                 })
                     .ToList()
-                    .Select(sv => new
+                    .Select(sv => new StudentGridItem
                     {
-                        sv.MaSV,
-                        sv.HoTen,
-                        sv.GioiTinh,
+                        MaSV = sv.MaSV,
+                        HoTen = sv.HoTen,
+                        GioiTinh = sv.GioiTinh,
                         NgaySinh = sv.NgaySinh.ToString("dd/MM/yyyy"),
-                        sv.TenLop
+                        MaLop = sv.MaLop,
+                        TenLop = sv.TenLop
                     })
                     .ToList();
+
+                keyword = (keyword ?? string.Empty).Trim();
+
+                if (!string.IsNullOrWhiteSpace(keyword))
+                {
+                    students = students
+                        .Where(student => ContainsSearchText(student.MaSV, keyword)
+                            || ContainsSearchText(student.HoTen, keyword)
+                            || ContainsSearchText(student.GioiTinh, keyword)
+                            || ContainsSearchText(student.NgaySinh, keyword)
+                            || ContainsSearchText(student.MaLop, keyword)
+                            || ContainsSearchText(student.TenLop, keyword))
+                        .ToList();
+                }
 
                 dgvStdView.DataSource = students;
                 label7.Text = string.Format("Trang 1/1 | {0} bản ghi", students.Count);
@@ -118,6 +135,12 @@ namespace QUANLYSV
                 cbClass.ValueMember = "MaLop";
                 cbClass.SelectedIndex = classes.Count > 0 ? 0 : -1;
             }
+        }
+
+        private bool ContainsSearchText(string source, string keyword)
+        {
+            return !string.IsNullOrEmpty(source)
+                && source.IndexOf(keyword, StringComparison.CurrentCultureIgnoreCase) >= 0;
         }
 
         private void btnAddStd_Click(object sender, EventArgs e)
@@ -164,7 +187,7 @@ namespace QUANLYSV
                     db.SubmitChanges();
                 }
 
-                LoadStudentList();
+                LoadStudentList(txtFind.Text);
                 ClearStudentForm();
                 MessageBox.Show("Thêm sinh viên thành công.", "Thành công", MessageBoxButtons.OK, MessageBoxIcon.Information);
             }
@@ -197,7 +220,7 @@ namespace QUANLYSV
                     if (student == null)
                     {
                         MessageBox.Show("Không tìm thấy sinh viên đã chọn.", "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                        LoadStudentList();
+                        LoadStudentList(txtFind.Text);
                         ClearStudentForm();
                         return;
                     }
@@ -211,6 +234,7 @@ namespace QUANLYSV
                     cbClass.SelectedValue = student.MaLop;
                     btnAddStd.Enabled = false;
                     btnEditStd.Enabled = true;
+                    btnDeleteStd.Enabled = true;
                 }
             }
             catch (Exception ex)
@@ -245,7 +269,7 @@ namespace QUANLYSV
                     if (student == null)
                     {
                         MessageBox.Show("Sinh viên cần sửa không còn tồn tại.", "Không tìm thấy dữ liệu", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                        LoadStudentList();
+                        LoadStudentList(txtFind.Text);
                         ClearStudentForm();
                         return;
                     }
@@ -257,13 +281,75 @@ namespace QUANLYSV
                     db.SubmitChanges();
                 }
 
-                LoadStudentList();
+                LoadStudentList(txtFind.Text);
                 ClearStudentForm();
                 MessageBox.Show("Cập nhật sinh viên thành công.", "Thành công", MessageBoxButtons.OK, MessageBoxIcon.Information);
             }
             catch (Exception ex)
             {
                 MessageBox.Show("Không thể cập nhật sinh viên: " + ex.Message, "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
+        private void btnDeleteStd_Click(object sender, EventArgs e)
+        {
+            if (string.IsNullOrWhiteSpace(selectedStudentId))
+            {
+                MessageBox.Show("Vui lòng chọn sinh viên cần xóa trong danh sách.", "Chưa chọn sinh viên", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
+
+            DialogResult confirmResult = MessageBox.Show(
+                "Bạn có chắc muốn xóa sinh viên có mã " + selectedStudentId + " không?",
+                "Xác nhận xóa",
+                MessageBoxButtons.YesNo,
+                MessageBoxIcon.Warning);
+
+            if (confirmResult != DialogResult.Yes)
+            {
+                return;
+            }
+
+            try
+            {
+                using (DatabaseDataContext db = CreateDataContext())
+                {
+                    SinhVien student = db.SinhVien.FirstOrDefault(sv => sv.MaSV == selectedStudentId);
+
+                    if (student == null)
+                    {
+                        MessageBox.Show("Sinh viên cần xóa không còn tồn tại.", "Không tìm thấy dữ liệu", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                        LoadStudentList(txtFind.Text);
+                        ClearStudentForm();
+                        return;
+                    }
+
+                    db.SinhVien.DeleteOnSubmit(student);
+                    db.SubmitChanges();
+                }
+
+                LoadStudentList(txtFind.Text);
+                ClearStudentForm();
+                MessageBox.Show("Xóa sinh viên thành công.", "Thành công", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Không thể xóa sinh viên: " + ex.Message, "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
+        private void btnFind_Click(object sender, EventArgs e)
+        {
+            LoadStudentList(txtFind.Text);
+            ClearStudentForm();
+        }
+
+        private void txtFind_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.KeyCode == Keys.Enter)
+            {
+                e.SuppressKeyPress = true;
+                btnFind_Click(sender, EventArgs.Empty);
             }
         }
 
@@ -299,6 +385,7 @@ namespace QUANLYSV
 
         private void btnReload_Click(object sender, EventArgs e)
         {
+            txtFind.Clear();
             LoadStudentList();
             ClearStudentForm();
         }
@@ -315,7 +402,23 @@ namespace QUANLYSV
             dgvStdView.ClearSelection();
             btnAddStd.Enabled = true;
             btnEditStd.Enabled = false;
+            btnDeleteStd.Enabled = false;
             txtStdId.Focus();
+        }
+
+        private class StudentGridItem
+        {
+            public string MaSV { get; set; }
+
+            public string HoTen { get; set; }
+
+            public string GioiTinh { get; set; }
+
+            public string NgaySinh { get; set; }
+
+            public string MaLop { get; set; }
+
+            public string TenLop { get; set; }
         }
     }
 }
